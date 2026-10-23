@@ -1,0 +1,9 @@
+std_msgs/Header header
+uint8 failed_motor
+string cause
+float32 severity
+bool confirmed
+uint8 esc_motor
+uint8 imu_motor
+float32[4] speed_ratio
+float32[3] torque_residual

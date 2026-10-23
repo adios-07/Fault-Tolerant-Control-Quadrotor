@@ -1,0 +1,12 @@
+{'id': 'i020a', 'steps': 100000000.0, 'envs': 16384, 'horizon': 64, 't_fail': [1.0, 4.0], 'motor': -1, 'p_fault': 0.5, 'partial': 0.0, 'init': 'runs/i019c/policy.pkl', 'lr': 0.0001, 'gamma': 0.99, 'lam': 0.95, 'clip': 0.2, 'epochs': 4, 'minibatches': 8, 'vf_coef': 0.5, 'ent_coef': 0.0, 'reward_scale': 0.1, 'selector': False, 'sel_coef': 1.0, 'base': None, 'act_noise': 0.05, 'seed': 0, 'joint': True, 'expert': None, 'reset_std': 0.1, 'gz_rand': True, 'reward': 'precise', 'handover': 120, 'delay_min': 0, 'prop_j': [0.08, 1.2], 'p_spin': 0.5, 'ekf_rand': 20.0}
+   10.49M steps      65811 steps/s  reward 1.142  episodes   670  crash 1.00  std 0.098  selector acc 1.00
+   20.97M steps      65561 steps/s  reward 1.184  episodes   112  crash 1.00  std 0.095  selector acc 1.00
+   31.46M steps      64728 steps/s  reward 1.114  episodes   863  crash 0.46  std 0.093  selector acc 1.00
+   41.94M steps      63924 steps/s  reward 1.164  episodes   376  crash 0.62  std 0.091  selector acc 1.00
+   52.43M steps      64160 steps/s  reward 1.258  episodes   127  crash 0.54  std 0.090  selector acc 1.00
+   62.91M steps      64096 steps/s  reward 1.181  episodes   350  crash 0.44  std 0.088  selector acc 1.00
+   73.40M steps      64044 steps/s  reward 1.163  episodes   200  crash 0.55  std 0.087  selector acc 1.00
+   83.89M steps      64045 steps/s  reward 1.175  episodes  1250  crash 0.23  std 0.085  selector acc 1.00
+   94.37M steps      63902 steps/s  reward 1.174  episodes   394  crash 0.37  std 0.084  selector acc 1.00
+   99.61M steps      63806 steps/s  reward 1.177  episodes   246  crash 0.48  std 0.083  selector acc 1.00
+  100.66M steps      63805 steps/s  reward 1.215  episodes   239  crash 0.48  std 0.083  selector acc 1.00

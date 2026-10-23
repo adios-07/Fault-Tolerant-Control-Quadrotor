@@ -1,0 +1,17 @@
+{'id': 'i025a', 'steps': 150000000.0, 'envs': 16384, 'horizon': 64, 't_fail': [1.0, 4.0], 'motor': -1, 'p_fault': 0.5, 'partial': 0.3, 'equivariant': True, 'severity': [0.3, 0.8], 'init': 'runs/i023b/policy.pkl', 'lr': 0.0001, 'gamma': 0.99, 'lam': 0.95, 'clip': 0.2, 'epochs': 4, 'minibatches': 8, 'vf_coef': 0.5, 'ent_coef': 0.0, 'reward_scale': 0.1, 'selector': False, 'sel_coef': 1.0, 'base': None, 'act_noise': 0.05, 'seed': 0, 'joint': True, 'expert': None, 'reset_std': 0.1, 'gz_rand': True, 'reward': 'precise', 'tilt_pen': 1.0, 'moving': 0.7, 'handover': 120, 'delay_min': 0, 'prop_j': [0.08, 1.2], 'p_spin': 0.5, 'hw_rand': True, 'cg_toward': 0.0, 'onboard': [0.8, 3.0, 0.5, 4.0, 45.0], 'ekf_rand': 0.0}
+   10.49M steps      37060 steps/s  reward 1.001  episodes   707  crash 1.00  std 0.098  selector acc 0.94
+   20.97M steps      35095 steps/s  reward 1.015  episodes   545  crash 1.00  std 0.096  selector acc 0.96
+   31.46M steps      34235 steps/s  reward 1.027  episodes   697  crash 0.72  std 0.094  selector acc 0.95
+   41.94M steps      33738 steps/s  reward 1.021  episodes   821  crash 0.68  std 0.093  selector acc 0.95
+   52.43M steps      33567 steps/s  reward 1.023  episodes   906  crash 0.60  std 0.091  selector acc 0.94
+   62.91M steps      33462 steps/s  reward 1.020  episodes   944  crash 0.56  std 0.090  selector acc 0.94
+   73.40M steps      33352 steps/s  reward 1.027  episodes   832  crash 0.57  std 0.089  selector acc 0.95
+   83.89M steps      33282 steps/s  reward 1.018  episodes  1047  crash 0.55  std 0.087  selector acc 0.95
+   94.37M steps      33243 steps/s  reward 1.026  episodes   950  crash 0.58  std 0.086  selector acc 0.95
+  104.86M steps      33201 steps/s  reward 1.031  episodes   963  crash 0.55  std 0.085  selector acc 0.96
+  115.34M steps      33168 steps/s  reward 1.033  episodes  1050  crash 0.57  std 0.083  selector acc 0.95
+  125.83M steps      33133 steps/s  reward 1.028  episodes  1073  crash 0.56  std 0.082  selector acc 0.95
+  136.31M steps      33107 steps/s  reward 1.031  episodes  1017  crash 0.57  std 0.081  selector acc 0.96
+  146.80M steps      33094 steps/s  reward 1.031  episodes   982  crash 0.56  std 0.080  selector acc 0.96
+  149.95M steps      33088 steps/s  reward 1.031  episodes  1067  crash 0.56  std 0.079  selector acc 0.97
+  150.99M steps      33074 steps/s  reward 1.032  episodes  1047  crash 0.58  std 0.079  selector acc 0.96

@@ -1,0 +1,157 @@
+x500v2_i025a: passive fault-tolerant low-level policy, successor of i023b.
+Same interface: 27-in / 4-out ONNX (opset 17, IR 8), same pftc_ref.py (unchanged), shadow mode before the handover,
+0.27 N floor. ONNX vs JAX on 12,000 closed-loop observations: max difference 1.1e-6.
+Training: fine-tune of i023b, 150M steps, joint PPO, all i023b settings (onboard estimator model, airframe errors,
+prop loss, flight-phase starts, PX4 stand-in 0-120 ms) plus partial loss and the symmetric structure below.
+
+WHAT CHANGED SINCE i023b
+1. Partial loss: 30 % of training faults leave the failed rotor at 30-80 % thrust (thrust and drag torque scaled
+   together). Below 50 % the policy flies it like a complete loss (yaw spin allowed, PX4 stand-in before the
+   handover); from 50 % up it holds yaw like a healthy drone. i023b had never been trained on it (5-7/20 crashes at
+   50-65 %); i025a: 0 crashes at 30/50/65/80 % in hover and in all 5 phases.
+2. Exactly symmetric policy: every motor fault now gives exactly the same result (mirror / rotation image).
+   i023b was not: its fault copies shared one network, but the selector that picks the copy and the healthy expert
+   were free networks (action difference up to 1.7 between mirrored views of the same moment). Now the selector
+   scores "motor i failed" only on the view in which motor i looks like motor 0, and the healthy expert is averaged
+   over the 4 symmetries. Measured equivariance error: 2.4e-7 (float rounding). The ONNX graph has the same structure.
+
+FAULT TABLE (bench replica, hover, crashes per 20 / xy RMS last 5 s / peak tilt)
+  complete stop (motor dead)            0 / 0.12 m / 72 deg
+  prop loss (motor spins, no thrust)    0 / 0.13 m / 72 deg
+  partial 30 % thrust                   0 / 0.09 m / 53 deg      (5 phases: 0 crashes, 0.12-0.71 m)
+  partial 50 %                          0 / 0.07 m / 36 deg      (5 phases: 0 crashes, 0.10-0.71 m)
+  partial 65 %                          0 / 0.72 m / 6 deg
+  partial 80 %                          0 / 0.36 m / 3 deg
+  intermittent (loose connector)        not modelled yet
+(The forward-phase 0.71 m is the distance flown before the handover; the sim target stays at the start point.)
+Partial >= 50 %: no PX4 stand-in in the replica, the policy flies through the fault (shadow mode allows that).
+The 65 % / 80 % xy error (0.4-0.7 m, a slow steady offset) is the weakest point of this table.
+
+PER-MOTOR SYMMETRY (matched starts: exactly at the target, no estimate noise, so motor i failing is the exact
+mirror/rotation of motor 0; values per motor 0..3)
+complete stop  crashed units []  per motor xy 0.0777 0.0777 0.0777 0.0777  peak 70.91 70.91 70.91 70.91  alt 0.5283 0.5283 0.5283 0.5283  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+prop loss      crashed units []  per motor xy 0.0920 0.0920 0.0920 0.0920  peak 70.76 70.76 70.76 70.76  alt 0.5127 0.5127 0.5127 0.5127  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+partial 30 %   crashed units []  per motor xy 0.0861 0.0861 0.0861 0.0861  peak 52.00 52.00 52.00 52.00  alt 0.2687 0.2687 0.2687 0.2687  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+partial 50 %   crashed units []  per motor xy 0.0744 0.0744 0.0744 0.0744  peak 35.12 35.12 35.12 35.12  alt 0.1126 0.1126 0.1126 0.1126  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+partial 65 %   crashed units []  per motor xy 0.7145 0.7145 0.7145 0.7145  peak 5.80 5.80 5.80 5.80  alt 0.0731 0.0731 0.0731 0.0731  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+partial 80 %   crashed units []  per motor xy 0.3550 0.3550 0.3550 0.3550  peak 2.82 2.82 2.82 2.82  alt 0.0369 0.0369 0.0369 0.0369  max spread xy 0.0e+00 m, peak 0.0e+00 deg
+i023b on the same check: complete stop spread 1e-4 m, partial 50 % crashed only motor 1, partial 65 % only motor 2
+(xy spread 30 m). On the bench, per-motor numbers can still differ with different start points, headings and noise,
+and on real hardware with non-identical motors; the controller itself is symmetric.
+
+HANDOVER DELAY (crashes per 20; gt stop/prop, climb prop, yaw stop, partial 30/50 %): 0 ms 0, 80 ms 0, 120 ms 0,
+160 ms 0 (peak tilt up to 86 deg at 160 ms in yaw).
+
+ONBOARD ESTIMATOR TOLERANCE (same model as i023b, see ../x500v2_i023b/results.txt for the calibration and the
+heading explanation). Hover, 10 Hz GPS 100 ms, crashes / xy RMS last 5 s:
+  gyro bias 1 / 2 / 4 deg/s: 0 / 0.20 m, 0 / 0.33 m, 0 / 1.22 m
+  heading offset 5 / 10 / 20 / 30 deg: 0 / 0.17 m, 0 / 0.18 m, 0 / 0.21 m, 0 / 1.47 m (i023b 0.67 m)
+  GPS 30 Hz 0 ms / 10 Hz 100 ms / 5 Hz 200 ms: 0 / 0.14 m, 0 / 0.17 m, 0 / 0.22 m
+  gyro scale 1 %: no crash but drifts 25 m (heading drift ~11 deg/s in the spin). Unchanged conclusion: keep
+  heading error below about 20 deg; the estimator needs heading aiding.
+
+AIRFRAME ERRORS (held out; policy flies before the fault), crashes per 20 i023b -> i025a:
+  in training range: mass 0 -> 0 (xy 0.15 -> 0.08 m), thrust 0 -> 0, lag 0 -> 0, J 0 -> 0, CG 4 -> 4, all 3 -> 3-5
+  wider: mass 0 -> 0, thrust 0 -> 0, lag 0 -> 0, J 0 -> 0, CG 10 -> 9, all 14-15 -> 13
+  CG offset toward the failed rotor (>= ~1 cm) is still the open case: keep the CG within ~0.5 cm of the motor centre.
+
+FULL TABLE (bench replica, Rotor_Failure/bench_sim.py: 20 units = 4 motors x 5 starts, phases with per-unit heading,
+PX4 stand-in, handover 80 ms, scored from the handover to fault + 15 s; crash = tilt > 90 deg or height loss > 2.7 m;
+ob_<phase> = onboard estimator with 1 % gyro scale, which drifts by design, see above; part<h>_<phase> = partial loss)
+setting               i023b: crash/20 peak xy    i025a: crash/20 peak xy   extra (i025a)
+gt_stop                       0   72.9   0.12            0   71.6   0.12   alt loss 0.51/0.56 m
+gt_prop                       0   72.8   0.11            0   71.5   0.13   alt loss 0.50/0.54 m
+hover_stop                    0   73.6   0.12            0   71.8   0.12   alt loss 0.49/0.55 m
+hover_prop                    0   73.6   0.11            0   71.8   0.13   alt loss 0.48/0.54 m
+forward_stop                  0   82.5   0.78            0   80.9   0.78   alt loss 0.51/0.78 m
+forward_prop                  0   81.6   0.77            0   80.1   0.77   alt loss 0.49/0.73 m
+climb_stop                    0   82.1   0.12            0   81.3   0.12   alt loss 0.85/0.92 m
+climb_prop                    0   82.2   0.11            0   81.4   0.13   alt loss 0.83/0.90 m
+descent_stop                  0   69.5   0.12            0   69.9   0.12   alt loss 0.69/0.70 m
+descent_prop                  0   69.4   0.11            0   69.9   0.13   alt loss 0.67/0.68 m
+yaw_stop                      0   82.5   0.12            0   82.2   0.12   alt loss 0.54/0.84 m
+yaw_prop                      0   82.1   0.11            0   81.7   0.13   alt loss 0.52/0.79 m
+hwx_mass_stop                 0   79.4   0.16            0   76.1   0.09   alt loss 0.61/0.71 m
+hwx_mass_prop                 0   79.1   0.15            0   76.0   0.10   alt loss 0.59/0.70 m
+hwx_cg_stop                  10  127.0   0.49            9  117.3   0.52   alt loss 0.93/1.50 m
+hwx_cg_prop                  10  127.5   0.48            9  118.0   0.52   alt loss 0.92/1.50 m
+hwx_thrust_stop               0   82.8   0.27            0   83.8   0.26   alt loss 1.08/1.52 m
+hwx_thrust_prop               0   82.9   0.26            0   84.1   0.27   alt loss 1.04/1.52 m
+hwx_lag_stop                  0   82.2   0.16            0   77.7   0.10   alt loss 0.72/0.75 m
+hwx_lag_prop                  0   82.5   0.14            0   77.9   0.11   alt loss 0.71/0.73 m
+hwx_J_stop                    0   75.8   0.15            0   76.7   0.08   alt loss 0.57/0.64 m
+hwx_J_prop                    0   76.0   0.14            0   76.8   0.09   alt loss 0.55/0.63 m
+hwx_all_stop                 14  132.4   0.92           13  136.8   0.69   alt loss 1.23/1.62 m
+hwx_all_prop                 15  174.6   0.93           13  145.4   1.13   alt loss 1.23/1.62 m
+hw_mass_stop                  0   78.8   0.15            0   75.0   0.08   alt loss 0.54/0.63 m
+hw_mass_prop                  0   78.8   0.14            0   74.9   0.10   alt loss 0.53/0.62 m
+hw_cg_stop                    4  105.4   0.32            4  105.0   0.31   alt loss 0.55/1.50 m
+hw_cg_prop                    4  106.1   0.32            4  105.6   0.31   alt loss 0.54/1.50 m
+hw_thrust_stop                0   80.7   0.23            0   78.3   0.18   alt loss 0.66/1.18 m
+hw_thrust_prop                0   80.7   0.23            0   78.3   0.20   alt loss 0.64/1.15 m
+hw_lag_stop                   0   78.3   0.16            0   75.2   0.10   alt loss 0.65/0.66 m
+hw_lag_prop                   0   78.5   0.14            0   75.3   0.10   alt loss 0.63/0.65 m
+hw_J_stop                     0   74.9   0.16            0   74.7   0.08   alt loss 0.54/0.58 m
+hw_J_prop                     0   74.7   0.14            0   74.8   0.09   alt loss 0.53/0.57 m
+hw_all_stop                   3  105.9   0.34            3  104.7   0.29   alt loss 0.93/1.57 m
+hw_all_prop                   3  114.2   0.34            5  112.3   0.29   alt loss 0.88/1.57 m
+hw_none_stop                  0   75.0   0.15            0   72.4   0.08   alt loss 0.53/0.55 m
+hw_none_prop                  0   74.9   0.14            0   72.3   0.10   alt loss 0.51/0.54 m
+part30_stop                   0   47.1   0.35            0   53.3   0.09   alt loss 0.28/0.30 m
+part50_stop                   7   42.9   1.45            0   36.3   0.07   alt loss 0.13/0.13 m
+part65_stop                   5   10.7   0.60            0    6.2   0.72   alt loss 0.07/0.08 m
+part80_stop                   0    4.6   0.41            0    3.2   0.35   alt loss 0.04/0.04 m
+part30_hover                  0   57.3   0.31            0   53.0   0.12   alt loss 0.12/0.28 m
+part30_forward                2  102.9   0.85            0   75.4   0.71   alt loss 0.21/0.53 m
+part30_climb                  0   43.7   0.34            0   54.6   0.12   alt loss 0.23/0.39 m
+part30_descent                0   65.1   0.34            0   50.9   0.12   alt loss 0.04/0.16 m
+part30_yaw                    0   43.6   0.34            0   53.7   0.12   alt loss 0.13/0.33 m
+part50_hover                  5   36.0   3.04            0   33.2   0.10   alt loss 0.12/0.17 m
+part50_forward                2   73.2   1.29            0   48.8   0.71   alt loss 0.10/0.22 m
+part50_climb                  7   38.8   2.27            0   36.3   0.11   alt loss 0.22/0.28 m
+part50_descent                7  144.5   3.21            0   29.9   0.10   alt loss 0.02/0.07 m
+part50_yaw                    6   70.5   3.48            0   40.7   0.11   alt loss 0.11/0.18 m
+ob_scale0                     0   73.9   0.17            0   72.8   0.17   heading err 5/10 s 0.0/0.0 deg, v err 0.141 m/s
+ob_scale1                     0   74.3  21.34            0   73.1  25.42   heading err 5/10 s 37.3/97.6 deg, v err 2.157 m/s
+ob_scale2                     6   74.6  39.55            0   73.5  38.60   heading err 5/10 s 75.1/151.0 deg, v err 4.252 m/s
+ob_scale3                    12   74.9  27.49           20   73.9      -   heading err 5/10 s 115.4/43.2 deg, v err 6.034 m/s
+ob_scale4                    12   75.3  39.25            7   74.2  49.91   heading err 5/10 s 151.4/67.7 deg, v err 5.665 m/s
+ob_scale6                    18   75.9  68.21           20   74.8      -   heading err 5/10 s 128.9/58.5 deg, v err 6.173 m/s
+ob_bias1                      0   73.6   0.21            0   72.6   0.20   heading err 5/10 s 4.7/9.6 deg, v err 0.156 m/s
+ob_bias2                      0   74.0   0.31            0   72.6   0.33   heading err 5/10 s 9.4/19.2 deg, v err 0.2 m/s
+ob_bias4                      0   74.9   1.13            0   73.5   1.22   heading err 5/10 s 18.6/37.4 deg, v err 0.464 m/s
+ob_head5                      0   74.1   0.17            0   73.1   0.17   heading err 5/10 s 5.0/5.0 deg, v err 0.15 m/s
+ob_head10                     0   74.5   0.17            0   73.5   0.18   heading err 5/10 s 10.0/9.9 deg, v err 0.176 m/s
+ob_head20                     0   75.4   0.21            0   74.2   0.21   heading err 5/10 s 19.8/19.8 deg, v err 0.273 m/s
+ob_head30                     0   75.7   0.67            0   74.5   1.47   heading err 5/10 s 29.8/29.5 deg, v err 0.504 m/s
+ob_gps30_0                    0   73.5   0.14            0   72.1   0.14   heading err 5/10 s 0.0/0.0 deg, v err 0.073 m/s
+ob_gps10_100                  0   73.9   0.17            0   72.8   0.17   heading err 5/10 s 0.0/0.0 deg, v err 0.141 m/s
+ob_gps5_200                   0   73.9   0.21            0   72.6   0.22   heading err 5/10 s 0.0/0.0 deg, v err 0.203 m/s
+ob_hover_stop                 0   75.3  19.30            4   73.8  21.70   heading err 5/10 s 37.5/92.9 deg, v err 2.299 m/s
+ob_hover_prop                 0   75.3  11.21            1   73.8  11.23   heading err 5/10 s 31.2/67.9 deg, v err 1.483 m/s
+ob_forward_stop               1   81.2  20.77            3   80.0  20.78   heading err 5/10 s 37.4/96.2 deg, v err 2.573 m/s
+ob_forward_prop               0   80.3  12.34            2   79.2  11.96   heading err 5/10 s 31.5/72.5 deg, v err 1.618 m/s
+ob_climb_stop                 0   84.9  22.03            2   85.1  23.88   heading err 5/10 s 36.8/94.3 deg, v err 2.464 m/s
+ob_climb_prop                 0   85.0  11.30            3   85.1  11.49   heading err 5/10 s 31.3/71.7 deg, v err 1.525 m/s
+ob_descent_stop               1   69.5  22.00            3   69.8  24.37   heading err 5/10 s 39.0/98.1 deg, v err 2.75 m/s
+ob_descent_prop               1   69.4  12.27            3   69.7  12.36   heading err 5/10 s 32.1/71.0 deg, v err 1.663 m/s
+ob_yaw_stop                   0   84.3  21.38            3   83.3  19.86   heading err 5/10 s 37.7/96.4 deg, v err 2.396 m/s
+ob_yaw_prop                   0   83.9  11.23            1   83.2  12.27   heading err 5/10 s 31.3/72.6 deg, v err 1.598 m/s
+hw_all_hover_stop             2  106.2   0.12            3  103.7   0.12   alt loss 0.91/1.51 m
+hw_all_hover_prop             4  119.5   0.10            5  111.7   0.12   alt loss 0.87/1.51 m
+hw_all_forward_stop           4  122.4   0.73            4  108.8   0.70   alt loss 0.96/1.51 m
+hw_all_forward_prop           6  130.5   0.72            6  114.4   0.69   alt loss 0.93/1.51 m
+hw_all_climb_stop             2  105.6   0.12            3  102.7   0.12   alt loss 0.98/1.61 m
+hw_all_climb_prop             3  119.4   0.11            5  110.9   0.12   alt loss 0.93/1.61 m
+hw_all_descent_stop           2  105.4   0.12            4  102.5   0.12   alt loss 0.84/1.41 m
+hw_all_descent_prop           4  117.7   0.10            6  110.1   0.12   alt loss 0.81/1.41 m
+hw_all_yaw_stop               2  101.8   0.12            5  102.0   0.12   alt loss 0.91/1.51 m
+hw_all_yaw_prop               3  115.3   0.10            5  108.5   0.13   alt loss 0.87/1.51 m
+
+Bundle self-test (selftest.py): one recorded episode (motor 1 stop at 3 s, PX4 stand-in, handover 80 ms, Gazebo-gap
+dynamics) replayed through pftc_ref + this ONNX: max thrust difference 0.0 N, PASS. The same closed loop survives stop
+and prop loss (xy RMS 0.095 / 0.068 m, peak tilt 73 deg).
+
+NOT CHECKED: a real Gazebo run of i025a; intermittent faults; partial damage that changes the thrust/torque ratio;
+IMU noise, vibration and saturation; accelerometer bias. Small regressions vs i023b: heading offset 30 deg (0.67 ->
+1.47 m), and the airframe "all at once" phase runs (+1-3 crashes per 20, mostly the CG-toward-failed-rotor units).

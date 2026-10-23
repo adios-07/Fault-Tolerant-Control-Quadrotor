@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# @name Gazebo x500
+#
+# @type Quadrotor
+#
+
+. ${R}etc/init.d/rc.mc_defaults
+
+PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=x500}
+
+param set-default SIM_GZ_EN 1
+
+param set-default CA_AIRFRAME 0
+param set-default CA_ROTOR_COUNT 4
+# Square X500 v2 geometry (500 mm wheelbase), same as model.sdf
+
+param set-default CA_ROTOR0_PX 0.17678
+param set-default CA_ROTOR0_PY 0.17678
+param set-default CA_ROTOR0_KM 0.05
+
+param set-default CA_ROTOR1_PX -0.17678
+param set-default CA_ROTOR1_PY -0.17678
+param set-default CA_ROTOR1_KM 0.05
+
+param set-default CA_ROTOR2_PX 0.17678
+param set-default CA_ROTOR2_PY -0.17678
+param set-default CA_ROTOR2_KM -0.05
+
+param set-default CA_ROTOR3_PX -0.17678
+param set-default CA_ROTOR3_PY 0.17678
+param set-default CA_ROTOR3_KM -0.05
+
+param set-default SIM_GZ_EC_FUNC1 101
+param set-default SIM_GZ_EC_FUNC2 102
+param set-default SIM_GZ_EC_FUNC3 103
+param set-default SIM_GZ_EC_FUNC4 104
+
+param set-default SIM_GZ_EC_MIN1 150
+param set-default SIM_GZ_EC_MIN2 150
+param set-default SIM_GZ_EC_MIN3 150
+param set-default SIM_GZ_EC_MIN4 150
+
+param set-default SIM_GZ_EC_MAX1 1000
+param set-default SIM_GZ_EC_MAX2 1000
+param set-default SIM_GZ_EC_MAX3 1000
+param set-default SIM_GZ_EC_MAX4 1000
+
+# Holybro X500 v2 specs (model.sdf): 1.40 kg, J diag(0.0152, 0.0152, 0.028), 11.8 N max per rotor.
+# Hover: 3.43 N per rotor -> ~539 rad/s -> output (539-150)/850 = 0.46. PX4's hover-thrust estimator refines it.
+param set-default MPC_THR_HOVER 0.46
+# No action on ground-station link loss: lets the benchmark arm and fly headless, without QGC
+param set-default NAV_DLL_ACT 0
+
+# Logging: 131 (PX4 SITL default) + 16 high-rate profile, so actuator_motors is logged at full rate
+param set-default SDLOG_PROFILE 147

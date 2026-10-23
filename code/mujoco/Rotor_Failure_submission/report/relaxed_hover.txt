@@ -1,0 +1,17 @@
+x500v2: m 1.4 kg, J diag [0.0152, 0.0152, 0.028] kg m^2, arm (x, y) +-0.17678 m, kF 1.18e-05 N/(rad/s)^2, kappa = kM/kF 0.0160 m, rotor inertia 2.650e-05 kg m^2, max thrust 11.8 N
+
+1. Allocation [T, tau_x, tau_y, tau_z]^T = A f (rotor order 0 FR CCW, 1 BL CCW, 2 FL CW, 3 BR CW):
+[[ 1.      1.      1.      1.    ]
+ [-0.1768  0.1768  0.1768 -0.1768]
+ [-0.1768  0.1768 -0.1768  0.1768]
+ [-0.016  -0.016   0.016   0.016 ]]
+   rank A = 4; with column 0 zeroed: rank 3 (3 rotors cannot set 4 independent outputs)
+
+2. Naive hover on rotors 1-3 (body level): T = m g and tau_x = tau_y = 0 fix all three thrusts:
+   f = [0.0, 0.0, 6.867, 6.867] N (the partner rotor 1 must be off), leaving tau_z = 0.220 N m, so the yaw rate grows at 7.8 rad/s^2.
+   Rotor-drag yaw damping at these speeds: 0.0077 N m/(rad/s) -> steady spin ~ 28.6 rad/s.
+
+3a. Relaxed hover, least largest thrust: thrusts [N] [0.0, 3.16, 5.71, 5.71], body rates [rad/s] [-3.57, 3.52, 14.11], |w| 15.0 rad/s, spin axis 19.6 deg from body z
+3b. Simulated i025a (run_benchmark.py plant, mean of the last 10 s of a 40 s run): thrusts [N] [0.0, 0.14, 10.13, 3.68], body rates [3.42, 3.63, 28.17] rad/s, |w| 28.6 rad/s, mean tilt 10.3 deg
+    Equilibrium with rotors 1 and 2 fixed at those thrusts: thrusts [N] [0.0, 0.14, 10.13, 3.69], body rates [rad/s] [3.49, 3.7, 27.54], |w| 28.0 rad/s, spin axis 10.5 deg from body z
+    Residual of the equations at the simulated mean state: [-0.005, 0.005, -0.005, 0.006] (N m x3, N)

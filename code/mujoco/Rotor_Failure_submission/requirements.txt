@@ -1,0 +1,11 @@
+# Python 3.12. crazyflow is installed separately (editable, v0.4.0 + third_party/crazyflow_x500v2.patch), see RUN.md.
+jax[cuda13]==0.11.2      # CPU only: jax==0.11.2 and JAX_PLATFORMS=cpu
+flax==0.12.10
+optax==0.2.8
+mujoco==3.8.1
+mujoco-mjx==3.8.1
+numpy==2.4.4
+scipy==1.17.1
+onnx==1.23.2
+onnxruntime==1.31.0
+matplotlib==3.11.2

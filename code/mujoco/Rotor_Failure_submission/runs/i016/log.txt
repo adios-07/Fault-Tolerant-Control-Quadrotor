@@ -1,0 +1,25 @@
+{'id': 'i016', 'steps': 30000000.0, 'envs': 2048, 'horizon': 64, 't_fail': [1.0, 4.0], 'motor': -1, 'p_fault': 0.9, 'partial': 0.0, 'init': None, 'lr': 0.001, 'gamma': 0.99, 'lam': 0.95, 'clip': 0.2, 'epochs': 4, 'minibatches': 8, 'vf_coef': 0.5, 'ent_coef': 0.0, 'reward_scale': 0.1, 'selector': False, 'sel_coef': 1.0, 'base': 'runs/i014a_m0/policy.pkl', 'act_noise': 0.05, 'seed': 0, 'joint': False, 'expert': 'runs/i014a_m0/policy.pkl', 'reset_std': None, 'reward': 'paper'}
+    1.31M steps     200152 steps/s  sel loss 0.010  episodes    89  crash 1.00  selector acc 0.99
+    2.62M steps     250508 steps/s  sel loss 0.000  episodes     1  crash 1.00  selector acc 1.00
+    3.93M steps     273361 steps/s  sel loss 0.003  episodes   309  crash 0.00  selector acc 1.00
+    5.24M steps     285912 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+    6.55M steps     294635 steps/s  sel loss 0.001  episodes   140  crash 0.00  selector acc 1.00
+    7.86M steps     300558 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+    9.18M steps     305023 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   10.49M steps     308489 steps/s  sel loss 0.000  episodes   103  crash 0.00  selector acc 1.00
+   11.80M steps     310437 steps/s  sel loss 0.000  episodes     1  crash 0.00  selector acc 1.00
+   13.11M steps     310117 steps/s  sel loss 0.000  episodes   331  crash 0.00  selector acc 1.00
+   14.42M steps     308648 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   15.73M steps     305631 steps/s  sel loss 0.000  episodes   108  crash 0.00  selector acc 1.00
+   17.04M steps     302837 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   18.35M steps     300746 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   19.66M steps     298813 steps/s  sel loss 0.000  episodes   104  crash 0.00  selector acc 1.00
+   20.97M steps     296774 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   22.28M steps     295013 steps/s  sel loss 0.000  episodes   338  crash 0.00  selector acc 1.00
+   23.59M steps     293122 steps/s  sel loss 0.000  episodes     2  crash 0.50  selector acc 1.00
+   24.90M steps     292619 steps/s  sel loss 0.000  episodes    60  crash 0.00  selector acc 1.00
+   26.21M steps     293217 steps/s  sel loss 0.000  episodes     1  crash 0.00  selector acc 1.00
+   27.53M steps     293547 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00
+   28.84M steps     292921 steps/s  sel loss 0.000  episodes    86  crash 0.00  selector acc 1.00
+   29.88M steps     292312 steps/s  sel loss 0.000  episodes     1  crash 1.00  selector acc 1.00
+   30.02M steps     292228 steps/s  sel loss 0.000  episodes     0  crash 0.00  selector acc 1.00

@@ -1,0 +1,214 @@
+Stress test of i025a (stress.py, Gazebo-gap model, policy flies the healthy drone, PX4 stand-in, 80 ms handover).
+One error at a time, 20 units per point (4 motors x 5 starts, stop/prop alternating):
+
+mass x
+         0.6: crash  0/20  xy  0.079 m  peak  87.3 deg  alt loss 0.49 m
+         0.7: crash  0/20  xy  0.073 m  peak  82.5 deg  alt loss 0.44 m
+         0.8: crash  0/20  xy  0.077 m  peak  78.4 deg  alt loss 0.44 m
+         1.2: crash  0/20  xy  0.106 m  peak  69.5 deg  alt loss 0.75 m
+         1.3: crash  0/20  xy  0.117 m  peak  70.6 deg  alt loss 1.04 m
+         1.4: crash  0/20  xy  0.132 m  peak  70.5 deg  alt loss 1.23 m
+         1.5: crash  0/20  xy  0.153 m  peak  73.0 deg  alt loss 1.15 m
+
+thrust curve x (all)
+         0.6: crash  8/20  xy   0.37 m  peak  81.0 deg  alt loss 0.97 m
+         0.7: crash  0/20  xy  0.121 m  peak  63.9 deg  alt loss 1.21 m
+         0.8: crash  0/20  xy  0.112 m  peak  66.6 deg  alt loss 0.86 m
+         1.2: crash  0/20  xy   0.07 m  peak  77.1 deg  alt loss 0.42 m
+
+thrust curve spread +-
+         0.2: crash  0/20  xy  0.252 m  peak  86.4 deg  alt loss 0.56 m
+         0.3: crash  1/20  xy   0.38 m  peak  93.7 deg  alt loss 0.75 m
+
+battery sag (max thrust x)
+         0.8: crash  0/20  xy  0.083 m  peak  70.5 deg  alt loss 0.80 m
+         0.7: crash  0/20  xy  0.089 m  peak  74.7 deg  alt loss 1.49 m
+         0.6: crash 20/20  xy   None m  peak 115.7 deg  alt loss 1.49 m
+         0.5: crash 20/20  xy   None m  peak 100.7 deg  alt loss 1.49 m
+
+motor lag x
+           2: crash  0/20  xy  0.098 m  peak  75.6 deg  alt loss 0.64 m
+           3: crash  0/20  xy  0.108 m  peak  83.7 deg  alt loss 0.83 m
+           4: crash 19/20  xy  0.121 m  peak  94.7 deg  alt loss 1.14 m
+           6: crash 20/20  xy   None m  peak 119.8 deg  alt loss 1.49 m
+
+inertia J x
+         0.4: crash  0/20  xy  0.183 m  peak  86.7 deg  alt loss 0.70 m
+         0.6: crash  0/20  xy  0.078 m  peak  79.5 deg  alt loss 0.66 m
+         1.5: crash  0/20  xy  0.103 m  peak  70.3 deg  alt loss 0.58 m
+         2.0: crash  0/20  xy  0.116 m  peak  69.2 deg  alt loss 0.67 m
+         2.5: crash  0/20  xy  0.146 m  peak  69.3 deg  alt loss 0.78 m
+
+rotor inertia x
+        0.03: crash  0/20  xy  0.088 m  peak  72.2 deg  alt loss 0.52 m
+         2.0: crash  0/20  xy  0.068 m  peak  78.5 deg  alt loss 0.87 m
+         3.0: crash  0/20  xy  0.063 m  peak  76.6 deg  alt loss 1.20 m
+
+CG toward failed rotor cm
+        0.25: crash  0/20  xy  0.127 m  peak  77.9 deg  alt loss 0.66 m
+         0.5: crash  0/20  xy  0.179 m  peak  82.9 deg  alt loss 0.83 m
+        0.75: crash  0/20  xy  0.225 m  peak  87.3 deg  alt loss 0.93 m
+         1.0: crash 19/20  xy  0.255 m  peak  91.3 deg  alt loss 1.06 m
+         1.5: crash 20/20  xy   None m  peak 100.8 deg  alt loss 1.50 m
+         2.0: crash 20/20  xy   None m  peak 107.8 deg  alt loss 1.50 m
+         3.0: crash 20/20  xy   None m  peak 121.4 deg  alt loss 1.50 m
+
+CG away from failed rotor cm
+         2.0: crash  0/20  xy  0.396 m  peak  19.2 deg  alt loss 0.15 m
+         3.0: crash  0/20  xy  0.619 m  peak  29.2 deg  alt loss 0.21 m
+         5.0: crash  0/20  xy  2.228 m  peak  49.9 deg  alt loss 0.25 m
+
+CG sideways cm
+         2.0: crash  0/20  xy  0.442 m  peak  79.6 deg  alt loss 0.54 m
+         3.0: crash  0/20  xy  0.661 m  peak  83.3 deg  alt loss 0.59 m
+         5.0: crash 10/20  xy  2.266 m  peak  94.6 deg  alt loss 1.25 m
+
+actuation delay ms
+          20: crash  0/20  xy  0.094 m  peak  75.3 deg  alt loss 0.64 m
+          40: crash  0/20  xy  0.126 m  peak  86.6 deg  alt loss 0.96 m
+          60: crash 16/20  xy   0.82 m  peak 165.3 deg  alt loss 1.37 m
+          80: crash 20/20  xy   None m  peak 178.8 deg  alt loss 0.02 m
+
+state lag ms
+          20: crash  0/20  xy  0.098 m  peak  71.6 deg  alt loss 0.52 m
+          40: crash  0/20  xy  0.137 m  peak  72.2 deg  alt loss 0.56 m
+          60: crash 12/20  xy  5.014 m  peak 137.5 deg  alt loss 1.46 m
+
+estimate noise x
+           2: crash  0/20  xy  0.088 m  peak  75.4 deg  alt loss 0.55 m
+           5: crash  0/20  xy  0.098 m  peak  82.3 deg  alt loss 0.60 m
+          10: crash  0/20  xy  0.215 m  peak  86.9 deg  alt loss 0.76 m
+          20: crash 12/20  xy  0.799 m  peak 129.6 deg  alt loss 1.59 m
+
+handover ms
+         200: crash  0/20  xy  0.089 m  peak  79.4 deg  alt loss 1.01 m
+         300: crash  0/20  xy  0.126 m  peak  86.3 deg  alt loss 1.49 m
+         500: crash 20/20  xy   None m  peak 110.4 deg  alt loss 1.49 m
+
+gyro bias deg/s (onboard)
+           6: crash  0/20  xy  6.133 m  peak  74.2 deg  alt loss 0.59 m
+           8: crash  0/20  xy 12.186 m  peak  75.9 deg  alt loss 0.77 m
+          10: crash  1/20  xy 18.548 m  peak  75.9 deg  alt loss 1.23 m
+
+heading offset deg (onboard)
+          45: crash  0/20  xy  8.246 m  peak  75.1 deg  alt loss 0.60 m
+          60: crash  1/20  xy 18.883 m  peak  75.1 deg  alt loss 1.11 m
+          90: crash 16/20  xy 27.413 m  peak  73.5 deg  alt loss 1.49 m
+         120: crash  9/20  xy 29.363 m  peak  83.2 deg  alt loss 1.49 m
+
+GPS Hz/delay ms (onboard)
+       2/300: crash  0/20  xy  0.308 m  peak  72.5 deg  alt loss 0.61 m
+       1/500: crash  0/20  xy  0.447 m  peak  73.4 deg  alt loss 0.51 m
+    0.33/500: crash  0/20  xy  0.612 m  peak  72.8 deg  alt loss 0.58 m
+
+flight state at fault
+  forward 5 m/s: crash  1/20  xy  1.829 m  peak  90.1 deg  alt loss 0.66 m
+  climb 3 m/s: crash  0/20  xy  0.125 m  peak  67.7 deg  alt loss 0.79 m
+  descent 3 m/s: crash  0/20  xy   0.12 m  peak  80.0 deg  alt loss 0.42 m
+  yaw 4 rad/s: crash  0/20  xy  0.121 m  peak  89.0 deg  alt loss 0.64 m
+  start 2 m off: crash  0/20  xy  0.154 m  peak  72.3 deg  alt loss 0.51 m
+  1 m above ground: crash  0/20  xy  0.088 m  peak  72.0 deg  alt loss 0.52 m
+
+steady wind m/s
+         3.0: crash  0/20  xy  0.243 m  peak  75.6 deg  alt loss 0.52 m
+         6.0: crash  0/20  xy   2.01 m  peak  78.6 deg  alt loss 0.54 m
+        10.0: crash 17/20  xy 16.745 m  peak  91.2 deg  alt loss 1.50 m
+
+gusty wind m/s
+      3 +- 3: crash  0/20  xy   0.37 m  peak  76.5 deg  alt loss 0.52 m
+
+thrust tilt deg, healthy rotors
+           5: crash  2/20  xy  0.851 m  peak 118.9 deg  alt loss 0.65 m
+          10: crash  2/20  xy  2.428 m  peak 102.1 deg  alt loss 0.87 m
+
+thrust tilt deg, all rotors
+           3: crash  4/20  xy  0.252 m  peak 153.9 deg  alt loss 0.63 m
+           5: crash  3/20  xy   1.42 m  peak 110.5 deg  alt loss 0.61 m
+
+2nd rotor weak (neighbour)
+         0.9: crash  0/20  xy  0.101 m  peak  67.5 deg  alt loss 0.58 m
+         0.8: crash  0/20  xy  0.116 m  peak  60.6 deg  alt loss 0.73 m
+         0.7: crash  0/20  xy   0.13 m  peak  61.3 deg  alt loss 1.49 m
+         0.5: crash 20/20  xy   None m  peak 105.5 deg  alt loss 1.49 m
+
+2nd rotor weak (diagonal)
+         0.7: crash  0/20  xy  0.097 m  peak  58.1 deg  alt loss 0.33 m
+         0.5: crash  0/20  xy  0.113 m  peak  43.4 deg  alt loss 0.23 m
+
+partial 65 %, torque ratio
+         0.5: crash  0/20  xy  0.158 m  peak   6.7 deg  alt loss 0.17 m
+         1.5: crash  0/20  xy  0.696 m  peak   6.1 deg  alt loss 0.07 m
+         2.0: crash  0/20  xy  0.596 m  peak   5.5 deg  alt loss 0.06 m
+
+partial 30 %, torque ratio
+         1.5: crash  0/20  xy  0.118 m  peak  51.9 deg  alt loss 0.27 m
+
+fault onset ramp s
+         0.5: crash  0/20  xy  0.084 m  peak  78.7 deg  alt loss 0.66 m
+         2.0: crash  0/20  xy  0.089 m  peak  40.7 deg  alt loss 0.13 m
+         5.0: crash  0/20  xy  0.086 m  peak  42.4 deg  alt loss 0.21 m
+
+
+BRUTAL Monte Carlo (--mc-scale 1, everything wide at once):
+
+Monte Carlo: 8000 episodes, crashed 89.0%; xy RMS of survivors 5.97 m
+logistic regression on standardised factors (log-odds of a crash per 1 std; + = raises crash risk):
+  delay_ms       +1.43   crash rate lowest 10 % 71%, highest 10 % 100%
+  lag_ms         +0.86   crash rate lowest 10 % 80%, highest 10 % 98%
+  motor_tau      +0.79   crash rate lowest 10 % 76%, highest 10 % 96%
+  handover_ms    +0.42   crash rate lowest 10 % 86%, highest 10 % 94%
+  cg_toward_cm   +0.39   crash rate lowest 10 % 86%, highest 10 % 93%
+  J              -0.38   crash rate lowest 10 % 93%, highest 10 % 86%
+  wind           +0.21   crash rate lowest 10 % 87%, highest 10 % 93%
+  sag            -0.19   crash rate lowest 10 % 92%, highest 10 % 89%
+  partial        -0.17   crash rate lowest 10 % 90%, highest 10 % 87%
+  weak2          +0.16   crash rate lowest 10 % 89%, highest 10 % 92%
+  speed          +0.14   crash rate lowest 10 % 88%, highest 10 % 90%
+  bias_dps       +0.10   crash rate lowest 10 % 87%, highest 10 % 91%
+  gps_period     +0.09   crash rate lowest 10 % 88%, highest 10 % 92%
+  mass           +0.09   crash rate lowest 10 % 89%, highest 10 % 88%
+  onset_s        +0.09   crash rate lowest 10 % 88%, highest 10 % 89%
+  cg_side_cm     +0.08   crash rate lowest 10 % 90%, highest 10 % 91%
+  q_ratio        +0.08   crash rate lowest 10 % 87%, highest 10 % 90%
+  head_deg       +0.07   crash rate lowest 10 % 88%, highest 10 % 90%
+  wz             +0.06   crash rate lowest 10 % 89%, highest 10 % 90%
+  tilt_deg       +0.05   crash rate lowest 10 % 89%, highest 10 % 90%
+  t_spread       +0.02   crash rate lowest 10 % 90%, highest 10 % 90%
+  noise          +0.00   crash rate lowest 10 % 88%, highest 10 % 88%
+  prop_j         -0.00   crash rate lowest 10 % 91%, highest 10 % 88%
+
+MODERATE Monte Carlo (--mc-scale 0.5):
+crash rate 0.458
+  handover_ms    +0.66
+  cg_toward_cm   +0.64
+  delay_ms       +0.49
+  onset_s        +0.43
+  motor_tau      +0.39
+  partial        -0.38
+  J              -0.29
+  lag_ms         +0.24
+  sag            -0.20
+  bias_dps       +0.12
+  tilt_deg       +0.12
+  mass           +0.11
+  q_ratio        +0.08
+  weak2          +0.07
+  cg_side_cm     +0.07
+  gps_period     +0.06
+  speed          +0.05
+  wz             +0.05
+  noise          -0.02
+  wind           +0.02
+  prop_j         -0.02
+  head_deg       -0.02
+  t_spread       -0.00
+
+CG FEASIBILITY (cg_feasibility.py, now relaxed_hover.py --cg; steady relaxed hover, failed rotor 0):
+Gazebo rotor inertia (0.1x)
+  toward failed  0.0 cm: max 5.6 N, partner 3.33 N, wz 14, tilt 20d | 0.5 cm: max 5.7 N, partner 3.25 N, wz 14, tilt 20d | 1.0 cm: max 5.7 N, partner 3.17 N, wz 14, tilt 20d | 1.5 cm: max 5.8 N, partner 3.10 N, wz 14, tilt 21d | 2.0 cm: max 5.8 N, partner 3.02 N, wz 15, tilt 21d | 3.0 cm: max 5.9 N, partner 2.87 N, wz 15, tilt 21d | 5.0 cm: max 6.1 N, partner 2.58 N, wz 16, tilt 22d
+  sideways       0.0 cm: max 5.6 N, partner 3.33 N, wz 14, tilt 20d | 0.5 cm: max 5.6 N, partner 3.33 N, wz 14, tilt 20d | 1.0 cm: max 5.6 N, partner 3.32 N, wz 14, tilt 20d | 1.5 cm: max 5.7 N, partner 3.31 N, wz 14, tilt 20d | 2.0 cm: max 5.7 N, partner 3.29 N, wz 14, tilt 20d | 3.0 cm: max 5.7 N, partner 3.24 N, wz 14, tilt 21d | 5.0 cm: max 5.9 N, partner 3.09 N, wz 15, tilt 22d
+  away           0.0 cm: max 5.6 N, partner 3.33 N, wz 14, tilt 20d | 0.5 cm: max 5.6 N, partner 3.42 N, wz 13, tilt 20d | 1.0 cm: max 5.5 N, partner 3.50 N, wz 13, tilt 19d | 1.5 cm: max 5.5 N, partner 3.59 N, wz 13, tilt 19d | 2.0 cm: max 5.4 N, partner 3.67 N, wz 12, tilt 19d | 3.0 cm: max 5.3 N, partner 3.85 N, wz 11, tilt 18d | 5.0 cm: max 5.0 N, partner 4.25 N, wz 10, tilt 16d
+physical rotor inertia
+  toward failed  0.0 cm: max 5.7 N, partner 3.16 N, wz 14, tilt 20d | 0.5 cm: max 5.8 N, partner 3.07 N, wz 14, tilt 20d | 1.0 cm: max 5.8 N, partner 2.99 N, wz 15, tilt 20d | 1.5 cm: max 5.9 N, partner 2.91 N, wz 15, tilt 20d | 2.0 cm: max 5.9 N, partner 2.83 N, wz 15, tilt 21d | 3.0 cm: max 6.0 N, partner 2.67 N, wz 16, tilt 21d | 5.0 cm: max 6.2 N, partner 2.37 N, wz 17, tilt 22d
+  sideways       0.0 cm: max 5.7 N, partner 3.16 N, wz 14, tilt 20d | 0.5 cm: max 5.7 N, partner 3.15 N, wz 14, tilt 20d | 1.0 cm: max 5.7 N, partner 3.15 N, wz 14, tilt 20d | 1.5 cm: max 5.7 N, partner 3.13 N, wz 14, tilt 20d | 2.0 cm: max 5.8 N, partner 3.11 N, wz 14, tilt 20d | 3.0 cm: max 5.8 N, partner 3.06 N, wz 15, tilt 21d | 5.0 cm: max 6.0 N, partner 2.89 N, wz 15, tilt 22d
+  away           0.0 cm: max 5.7 N, partner 3.16 N, wz 14, tilt 20d | 0.5 cm: max 5.7 N, partner 3.24 N, wz 14, tilt 19d | 1.0 cm: max 5.6 N, partner 3.33 N, wz 13, tilt 19d | 1.5 cm: max 5.5 N, partner 3.42 N, wz 13, tilt 19d | 2.0 cm: max 5.5 N, partner 3.51 N, wz 13, tilt 18d | 3.0 cm: max 5.3 N, partner 3.70 N, wz 12, tilt 17d | 5.0 cm: max 5.1 N, partner 4.12 N, wz 10, tilt 15d
